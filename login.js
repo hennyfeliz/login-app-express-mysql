@@ -24,18 +24,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'static')));
 
 // http://localhost:3000/
-app.get('/', function(request, response) {
+app.get('/', (request, response) => {
 	// Renderizar plantilla HTML de login
-	response.sendFile(path.join(__dirname + '/login.html'));
+	response.sendFile(path.join(`${__dirname}/login.html`));
 });
 
-app.post('/auth', function(request, response) {
-	let username = request.body.username;
-	let password = request.body.password;
+app.post('/auth', (request, response) => {
+	const { username, password } = request.body;
 	// Ensure the input fields exists and are not empty
 	if (username && password) {
 		// Execute SQL query that'll select the account from the database based on the specified username and password
-		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], (error, results, fields) => {
 			// If there is an issue with the query, output the error
 			if (error) throw error;
 			// If the account exists
@@ -57,11 +56,11 @@ app.post('/auth', function(request, response) {
 });
 
 // http://localhost:3000/home
-app.get('/home', function(request, response) {
+app.get('/home', (request, response) => {
 	// If the user is loggedin
 	if (request.session.loggedin) {
 		// Output username
-		response.send('Welcome back, ' + request.session.username + '!');
+		response.send(`Welcome back, ${request.session.username}!`);
 	} else {
 		// Not logged in
 		response.send('Please login to view this page!');
